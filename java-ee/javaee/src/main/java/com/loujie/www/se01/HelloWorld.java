@@ -4,7 +4,8 @@ public class HelloWorld {
 
 	public static void main(String[] args) {
 
-		System.err.println("Hello world!");
+		char c1 = 50;
+		System.err.println(c1);
 	}
 
 	class World {
