@@ -3,20 +3,17 @@ package com.loujie.www.se01;
 public class HelloWorld {
 
 	public static void main(String[] args) {
-
-		char c1 = 50;
-		System.err.println(c1);
+		int i1 = 7;
+		System.err.println(i1 << 2);
+		
+		
 	}
 
 	class World {
 
+		public void lll(String[] args) {
+			System.err.println("oooxxxx");
+		}
 	}
 
-}
-
-class Hello {
-
-	class World {
-
-	}
 }
