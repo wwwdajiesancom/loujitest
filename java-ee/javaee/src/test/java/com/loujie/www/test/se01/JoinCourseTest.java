@@ -31,7 +31,7 @@ public class JoinCourseTest {
 		// 1.1课件名称
 		List<String> coursewareNameList = this.getCoursewareNamelist();
 		// 1.2课件唯一Id
-		List<String> coursewareUniqIdList = this.getCoursewareUniqIdList(coursewareNameList.size(), "20170422");
+		List<String> coursewareUniqIdList = this.getCoursewareUniqIdList(coursewareNameList.size(), "20170507");
 		// 1.3获取课件时间长度
 		List<Integer> totalLengthList = this.getTotalLengthList();
 		// 1.4获取课件的视频
@@ -83,26 +83,10 @@ public class JoinCourseTest {
 	 */
 	public List<String> getVideoNameList() {
 		List<String> list = new ArrayList<>();
-		list.add("20170413-58eef2e6e8509.mp4");
-		list.add("20170413-58eef2e6e9e9f.mp4");
-		list.add("20170413-58eef2e6ea6d2.mp4");
-		list.add("20170413-58eef2e6eb06e.mp4");
-		list.add("20170413-58eef2e6eb792.mp4");
-		list.add("20170413-58eef2e6ec6e3.mp4");
-		list.add("20170413-58eef2e6ecc61.mp4");
-		list.add("20170413-58eef2e6edb3f.mp4");
-		list.add("20170413-58eef2e6ee271.mp4");
-		list.add("20170413-58eef2e6e3a93.mp4");
-		list.add("20170413-58eef2e6e3bb3.mp4");
-		list.add("20170413-58eef2e6e4215.mp4");
-		list.add("20170413-58eef2e6e4bb8.mp4");
-		list.add("20170413-58eef2e6e5e78.mp4");
-		list.add("20170413-58eef2e6e6550.mp4");
-		list.add("20170413-58eef2e6e6a8a.mp4");
-		list.add("20170413-58eef2e6e6fe6.mp4");
-		list.add("20170413-58eef2e6e74f4.mp4");
-		list.add("20170413-58eef2e6e7b1a.mp4");
-		list.add("20170413-58eef2e6e8cc8.mp4");
+		list.add("20170424-58fdb6ecbb936.mp4");
+		list.add("20170424-58fdb6ecbb9c9.mp4");
+		list.add("20170424-58fdb6ecbbab0.mp4");
+		list.add("20170427-5901584bf262a.mp4");
 		return list;
 	}
 
@@ -113,26 +97,10 @@ public class JoinCourseTest {
 	 */
 	public List<Integer> getTotalLengthList() {
 		List<Integer> list = new ArrayList<>();
-		list.add(60 * 27 + 7);
-		list.add(60 * 30 + 44);
-		list.add(60 * 27 + 47);
-		list.add(60 * 21 + 25);
-		list.add(60 * 23 + 24);
-		list.add(60 * 32 + 54);
-		list.add(60 * 29 + 20);
-		list.add(60 * 29 + 26);
-		list.add(60 * 32 + 34);
-		list.add(60 * 26 + 2);
-		list.add(60 * 29 + 25);
-		list.add(60 * 23 + 3);
-		list.add(60 * 24 + 16);
-		list.add(60 * 32 + 14);
-		list.add(60 * 26 + 2);
-		list.add(60 * 25 + 53);
-		list.add(60 * 20 + 55);
-		list.add(60 * 26 + 40);
-		list.add(60 * 25 + 37);
-		list.add(60 * 25 + 1);
+		list.add(60 * 9 + 31);
+		list.add(60 * 9 + 16);
+		list.add(60 * 9 + 20);
+		list.add(60 * 8 + 26);
 		return list;
 	}
 
@@ -164,26 +132,10 @@ public class JoinCourseTest {
 	 */
 	public List<String> getCoursewareNamelist() {
 		List<String> list = new ArrayList<>();
-		list.add("语音语调（1）");
-		list.add("语音语调（2）");
-		list.add("语音语调（3）");
-		list.add("语音语调（4）");
-		list.add("语音语调（5）");
-		list.add("语音语调（6）");
-		list.add("语音语调（7）");
-		list.add("语音语调（8）");
-		list.add("语音语调（9）");
-		list.add("语音语调（10）");
-		list.add("语音语调（11）");
-		list.add("语音语调（12）");
-		list.add("语音语调（13）");
-		list.add("语音语调（14）");
-		list.add("语音语调（15）");
-		list.add("语音语调（16）");
-		list.add("语音语调（17）");
-		list.add("语音语调（18）");
-		list.add("语音语调（19）");
-		list.add("语音语调（20）");
+		list.add("第1集 巴拉望美景探秘-中美主持掐架地下河");
+		list.add("第2集 巴拉望美食大战一触即发-毛蛋吓傻老美主持");
+		list.add("第3集 巧克力山迷雾探险-看呆萌眼镜猴逍遥薄荷岛");
+		list.add("第4集 马尼拉酒店惊魂记-市中市时光穿梭四百年");
 		return list;
 	}
 

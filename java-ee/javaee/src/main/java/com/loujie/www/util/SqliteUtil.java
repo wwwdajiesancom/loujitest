@@ -17,7 +17,7 @@ public class SqliteUtil {
 		Connection conn = null;
 		ResultSet rs = null;
 		try {
-			conn = DriverManager.getConnection("jdbc:sqlite:D:\\2017sqllit\\transFile_database.db-20170419", null,
+			conn = DriverManager.getConnection("jdbc:sqlite:D:\\2017sqllit\\transFile_database.db-20170504", null,
 					null);
 			String selectSQL = "select basename,box_1080p_filename,ultra_resolution_filename,high_resolution_filename,standard_resolution_filename from trans_table where basename = ?";
 			PreparedStatement ps = conn.prepareStatement(selectSQL);
