@@ -1,6 +1,7 @@
 package com.loujie.www.lucene3_5_0;
 
 import java.io.IOException;
+import java.util.UUID;
 
 import org.junit.Test;
 
@@ -21,19 +22,34 @@ public class LuceneHelloWord {
 	}
 
 	/**
-	 * 查询索引
+	 * 2.输出索引数量
 	 */
 	@Test
-	public void searchIndex2() {
+	public void printlnIndex2() {
 		try {
-			LuceneUtils.searchIndex(indexPath, "public");
+			LuceneUtils.printIndex(indexPath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.err.println("ok");
+	}
+
+	/**
+	 * 3.查询索引
+	 */
+	@Test
+	public void searchIndex3() {
+		try {
+			LuceneUtils.searchIndex(indexPath, "张敏");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void deleteIndex3(){
-		
+	@Test
+	public void deleteIndex3() {
+		for (int i = 0; i < 5; i++)
+			System.err.println(UUID.randomUUID().toString().replaceAll("-", ""));
 	}
-	
+
 }
