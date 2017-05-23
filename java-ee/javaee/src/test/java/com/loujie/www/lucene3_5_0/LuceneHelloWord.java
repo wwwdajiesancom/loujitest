@@ -40,10 +40,25 @@ public class LuceneHelloWord {
 	@Test
 	public void searchIndex3() {
 		try {
-			LuceneUtils.searchIndex(indexPath, "张敏");
+			LuceneUtils.searchIndex(indexPath, "id", "2", 10);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Test
+	public void searchByRange() {
+		LuceneUtils.searchByRange(indexPath, "phone", "1", "4", 10);
+	}
+
+	@Test
+	public void searchByPrefix() {
+		LuceneUtils.searchByPrefix(indexPath, "name", "寒", 3);
+	}
+
+	@Test
+	public void searchByBoolean() {
+		LuceneUtils.searchByBoolean(indexPath, 3);
 	}
 
 	@Test

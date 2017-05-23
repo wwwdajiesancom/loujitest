@@ -21,14 +21,19 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause.Occur;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
+import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
 
 import com.loujie.www.entity.User;
@@ -98,7 +103,7 @@ public class LuceneUtils {
 	 * @return
 	 * @throws IOException
 	 */
-	public static Object searchIndex(String indexPath, String queryString) throws IOException {
+	public static Object searchIndex(String indexPath, String fieldName, String queryInfo, int num) throws IOException {
 		// 1.用IndexReader读取已经存在的索引，并声明IndexSearch
 		Directory directory = getDirectory(indexPath);
 		try {
@@ -108,10 +113,10 @@ public class LuceneUtils {
 			Query query = null;
 			// 2.也可以通过QueryParse来创建Query
 			// query = queryParser.parse(queryString);
-			Term t = new Term("name", queryString);
+			Term t = new Term(fieldName, queryInfo);
 			query = new TermQuery(t);
 			// 3.用IndexSearcher查询
-			TopDocs topDocs = indexSearcher.search(query, 10);
+			TopDocs topDocs = indexSearcher.search(query, num);
 			// 4.处理返回结果,
 			System.err.println("搜索结果数量:" + topDocs.totalHits);
 			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
@@ -129,6 +134,106 @@ public class LuceneUtils {
 		return null;
 	}
 
+	public static void searchByRange(String indexPath, String field, String lowerTerm, String upperTerm, int num) {
+		try {
+			IndexSearcher indexSearcher = new IndexSearcher(getIndexReader(getDirectory(indexPath)));
+
+			Query query = new TermRangeQuery(field, lowerTerm, upperTerm, true, true);
+
+			TopDocs topDocs = indexSearcher.search(query, num);
+
+			System.err.println("总共有：" + topDocs.totalHits);
+
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document doc = indexSearcher.doc(scoreDoc.doc);
+				System.err.println(doc.get("toString"));
+			}
+
+			indexSearcher.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void searchByPrefix(String indexPath, String field, String prefixTxt, int num) {
+		try {
+			IndexSearcher indexSearcher = new IndexSearcher(getIndexReader(getDirectory(indexPath)));
+
+			Query query = new PrefixQuery(new Term(field, prefixTxt));
+
+			TopDocs topDocs = indexSearcher.search(query, num);
+
+			System.err.println("总共有：" + topDocs.totalHits);
+
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document doc = indexSearcher.doc(scoreDoc.doc);
+				System.err.println(doc.get("toString"));
+			}
+
+			indexSearcher.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	public static void searchByBoolean(String indexPath, int num) {
+		try {
+			IndexSearcher indexSearcher = new IndexSearcher(getIndexReader(getDirectory(indexPath)));
+
+			BooleanQuery query = new BooleanQuery();
+			// query.add(new TermQuery(new Term("name", "张")), Occur.MUST);
+			query.add(new PrefixQuery(new Term("js", "j")), Occur.SHOULD);
+			
+			
+
+			TopDocs topDocs = indexSearcher.search(query, num);
+
+			System.err.println("总共有：" + topDocs.totalHits);
+
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document doc = indexSearcher.doc(scoreDoc.doc);
+				System.err.println(scoreDoc.score);
+				System.err.println(doc.get("toString"));
+			}
+
+			indexSearcher.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	public static void searchByBoolean(String indexPath, int num) {
+		try {
+			IndexSearcher indexSearcher = new IndexSearcher(getIndexReader(getDirectory(indexPath)));
+
+			BooleanQuery query = new BooleanQuery();
+			// query.add(new TermQuery(new Term("name", "张")), Occur.MUST);
+			query.add(new PrefixQuery(new Term("js", "j")), Occur.SHOULD);
+			
+			
+
+			TopDocs topDocs = indexSearcher.search(query, num);
+
+			System.err.println("总共有：" + topDocs.totalHits);
+
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document doc = indexSearcher.doc(scoreDoc.doc);
+				System.err.println(scoreDoc.score);
+				System.err.println(doc.get("toString"));
+			}
+
+			indexSearcher.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	
+
 	/**
 	 * 删除索引根据条件
 	 * 
@@ -137,7 +242,7 @@ public class LuceneUtils {
 	 */
 	public static void deleteIndex(String indexPath) throws IOException {
 		// 1.IndexWriter
-		Directory directory = FSDirectory.open(new File(indexPath));
+		Directory directory = getDirectory(indexPath);
 		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35, new StandardAnalyzer(Version.LUCENE_35));
 		IndexWriter indexWriter = new IndexWriter(directory, iwc);
 
@@ -150,7 +255,7 @@ public class LuceneUtils {
 	}
 
 	public static void reDeleteIndex(String indexPath) throws CorruptIndexException, IOException {
-		IndexReader indexReader = IndexReader.open(FSDirectory.open(new File(indexPath)), false);
+		IndexReader indexReader = getIndexReader(getDirectory(indexPath));
 
 		indexReader.undeleteAll();
 
@@ -167,10 +272,10 @@ public class LuceneUtils {
 		List<Document> listDocument = new ArrayList<>();
 		for (User user : getUsers()) {
 			Document tempDoc = new Document();
-			tempDoc.add(new NumericField("id", Store.YES, true).setIntValue(user.getId()));
-			tempDoc.add(new Field("phone", user.getPhone(), Store.YES, Index.NOT_ANALYZED_NO_NORMS));
-			tempDoc.add(new Field("name", user.getName(), Store.YES, Index.NOT_ANALYZED));
-			tempDoc.add(new Field("password", user.getPassword(), Store.NO, Index.ANALYZED_NO_NORMS));
+			tempDoc.add(new Field("id", user.getId().toString(), Store.YES, Index.NOT_ANALYZED_NO_NORMS));
+			tempDoc.add(new Field("phone", user.getPhone(), Store.YES, Index.ANALYZED));
+			tempDoc.add(new Field("name", user.getName(), Store.YES, Index.ANALYZED_NO_NORMS));
+			tempDoc.add(new Field("js", user.getPassword(), Store.NO, Index.ANALYZED));
 			tempDoc.add(new Field("idno", user.getIdno(), Store.YES, Index.NOT_ANALYZED_NO_NORMS));
 			try {
 				tempDoc.add(new NumericField("createTime", Store.YES, true).setLongValue(sdf.parse(user.getCreateTime()).getTime()));
@@ -190,15 +295,15 @@ public class LuceneUtils {
 	 */
 	public static List<User> getUsers() {
 		List<User> listUsers = new ArrayList<>();
-		listUsers.add(new User(2, "15801852667", "丛祺", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "435432199010208765", "2016-08-19 13:52:29"));
-		listUsers.add(new User(3, "13671588178", "李华", "34e52980c72763e4100305223430c218c505dfc3", "310115198806120925", "2015-08-19 13:52:29"));
-		listUsers.add(new User(5, "13761168844", "张敏", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "310115198703305214", "2014-08-19 14:04:04"));
-		listUsers.add(new User(6, "13671812824", "徐晓琼", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "310115198801282220", "2013-08-19 14:04:04"));
-		listUsers.add(new User(7, "13917041493", "王寒", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "31011519891210323x", "2012-08-19 14:04:04"));
-		listUsers.add(new User(8, "13817770047", "罗楠", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "430781199201215014", "2011-08-19 14:04:04"));
-		listUsers.add(new User(9, "18016306785", "厉论", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "430111198810310352", "2011-08-19 14:04:04"));
-		listUsers.add(new User(10, "18017005450", "顾福祺", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "310110198811041517", "2012-08-19 14:04:04"));
-		listUsers.add(new User(11, "15800769360", "张荣", "d3aedd3b6b5d1f4a7840e16770adadb8f87c56d9", "310230198902044976", "2013-08-19 14:04:04"));
+		listUsers.add(new User(2, "15801852667", "丛祺", "i am jiege", "435432199010208765", "2016-08-19 13:52:29"));
+		listUsers.add(new User(39, "13671588178", "李华", "so easy", "310115198806120925", "2015-08-19 13:52:29"));
+		listUsers.add(new User(56, "13761168844", "张敏", "da jia hao", "310115198703305214", "2014-08-19 14:04:04"));
+		listUsers.add(new User(67, "13671812824", "徐晓琼", "tong xue men xin ku le!", "310115198801282220", "2013-08-19 14:04:04"));
+		listUsers.add(new User(47, "13917041493", "王寒", "da he xiang dong liu", "31011519891210323x", "2012-08-19 14:04:04"));
+		listUsers.add(new User(8, "13817770047", "罗楠", "i am you ma", "430781199201215014", "2011-08-19 14:04:04"));
+		listUsers.add(new User(95, "18016306785", "厉论", "da da da", "430111198810310352", "2011-08-19 14:04:04"));
+		listUsers.add(new User(140, "18017005450", "顾福祺", "ha ha", "310110198811041517", "2012-08-19 14:04:04"));
+		listUsers.add(new User(161, "15800769360", "张荣", "ss", "310230198902044976", "2013-08-19 14:04:04"));
 		return listUsers;
 	}
 
@@ -211,6 +316,9 @@ public class LuceneUtils {
 	 * @throws IOException
 	 */
 	private static Directory getDirectory(String indexPath) throws IOException {
+		if (indexPath == null || indexPath.isEmpty()) {
+			return new RAMDirectory();
+		}
 		return FSDirectory.open(new File(indexPath));
 	}
 
@@ -271,6 +379,7 @@ public class LuceneUtils {
 		} else {
 			IndexReader ir = IndexReader.openIfChanged(indexReader);
 			if (ir != null) {
+				closeReader(indexReader);
 				indexReader = ir;
 			}
 		}
