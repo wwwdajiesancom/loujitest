@@ -236,6 +236,7 @@ public class LuceneUtils {
 	private static IndexWriter getIndexWriter(Directory directory) throws CorruptIndexException, LockObtainFailedException, IOException {
 		// 1.声明索引写入器的配置,定义了使用的解析器
 		IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35, getAnalyzer());
+		// 2.每次都创建
 		iwc.setOpenMode(OpenMode.CREATE);
 		return new IndexWriter(directory, iwc);
 	}
