@@ -21,9 +21,13 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryParser.QueryParser.Operator;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.FuzzyQuery;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.PhraseQuery;
 import org.apache.lucene.search.PrefixQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -185,8 +189,6 @@ public class LuceneUtils {
 			BooleanQuery query = new BooleanQuery();
 			// query.add(new TermQuery(new Term("name", "张")), Occur.MUST);
 			query.add(new PrefixQuery(new Term("js", "j")), Occur.SHOULD);
-			
-			
 
 			TopDocs topDocs = indexSearcher.search(query, num);
 
@@ -204,16 +206,15 @@ public class LuceneUtils {
 		}
 
 	}
-	
-	public static void searchByBoolean(String indexPath, int num) {
+
+	public static void searchByPhraseQuery(String indexPath, int num) {
 		try {
 			IndexSearcher indexSearcher = new IndexSearcher(getIndexReader(getDirectory(indexPath)));
 
-			BooleanQuery query = new BooleanQuery();
-			// query.add(new TermQuery(new Term("name", "张")), Occur.MUST);
-			query.add(new PrefixQuery(new Term("js", "j")), Occur.SHOULD);
-			
-			
+			PhraseQuery query = new PhraseQuery();
+			query.setSlop(1);
+			query.add(new Term("js", "jiege"));
+			query.add(new Term("js", "i"));
 
 			TopDocs topDocs = indexSearcher.search(query, num);
 
@@ -231,8 +232,33 @@ public class LuceneUtils {
 		}
 
 	}
-	
-	
+
+	public static void searchFuzzy(String indexPath, int num) {
+		try {
+			IndexSearcher indexSearcher = new IndexSearcher(getIndexReader(getDirectory(indexPath)));
+
+			QueryParser queryParser = new QueryParser(Version.LUCENE_35, "js", getAnalyzer());
+			queryParser.setDefaultOperator(Operator.AND);
+			Query query = queryParser.parse("name:张敏 id:56");
+
+			TopDocs topDocs = indexSearcher.search(query, num);
+
+			System.err.println("总共有：" + topDocs.totalHits);
+
+			for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
+				Document doc = indexSearcher.doc(scoreDoc.doc);
+				System.err.println(scoreDoc.score);
+				System.err.println(doc.get("toString"));
+			}
+
+			indexSearcher.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (org.apache.lucene.queryParser.ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * 删除索引根据条件
@@ -300,7 +326,7 @@ public class LuceneUtils {
 		listUsers.add(new User(56, "13761168844", "张敏", "da jia hao", "310115198703305214", "2014-08-19 14:04:04"));
 		listUsers.add(new User(67, "13671812824", "徐晓琼", "tong xue men xin ku le!", "310115198801282220", "2013-08-19 14:04:04"));
 		listUsers.add(new User(47, "13917041493", "王寒", "da he xiang dong liu", "31011519891210323x", "2012-08-19 14:04:04"));
-		listUsers.add(new User(8, "13817770047", "罗楠", "i am you ma", "430781199201215014", "2011-08-19 14:04:04"));
+		listUsers.add(new User(8, "13817770047", "罗楠", "i am jiege ma", "430781199201215014", "2011-08-19 14:04:04"));
 		listUsers.add(new User(95, "18016306785", "厉论", "da da da", "430111198810310352", "2011-08-19 14:04:04"));
 		listUsers.add(new User(140, "18017005450", "顾福祺", "ha ha", "310110198811041517", "2012-08-19 14:04:04"));
 		listUsers.add(new User(161, "15800769360", "张荣", "ss", "310230198902044976", "2013-08-19 14:04:04"));

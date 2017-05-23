@@ -62,9 +62,13 @@ public class LuceneHelloWord {
 	}
 
 	@Test
-	public void deleteIndex3() {
-		for (int i = 0; i < 5; i++)
-			System.err.println(UUID.randomUUID().toString().replaceAll("-", ""));
+	public void searchByPhrase() {
+		LuceneUtils.searchByPhraseQuery(indexPath, 3);
+	}
+
+	@Test
+	public void serachByFuzzy() {
+		LuceneUtils.searchFuzzy(indexPath, 4);
 	}
 
 }
