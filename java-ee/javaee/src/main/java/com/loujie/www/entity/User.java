@@ -22,15 +22,18 @@ public class User implements Serializable {
 
 	private String idno;// 身份证号
 
+	private Integer status = 1;// 状态
+
 	private String createTime;// 创建时间
 
-	public User(Integer id, String phone, String name, String password, String idno, String createTime) {
+	public User(Integer id, String phone, String name, String password, String idno, Integer status, String createTime) {
 		super();
 		this.id = id;
 		this.phone = phone;
 		this.name = name;
 		this.password = password;
 		this.idno = idno;
+		this.status = status;
 		this.createTime = createTime;
 	}
 
@@ -80,6 +83,14 @@ public class User implements Serializable {
 
 	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
 	}
 
 	@Override
