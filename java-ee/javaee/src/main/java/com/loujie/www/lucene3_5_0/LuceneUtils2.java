@@ -12,6 +12,12 @@ import java.util.List;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.apache.lucene.analysis.tokenattributes.FlagsAttribute;
+import org.apache.lucene.analysis.tokenattributes.KeywordAttribute;
+import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
+import org.apache.lucene.analysis.tokenattributes.PayloadAttribute;
+import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
@@ -22,10 +28,11 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -90,8 +97,9 @@ public class LuceneUtils2 {
 	 * @param pageSize
 	 *            每页多少条
 	 * @throws IOException
+	 * @throws org.apache.lucene.queryParser.ParseException
 	 */
-	public static void indexPage(String indexPath, Integer pageNum, Integer pageSize) throws IOException {
+	public static void indexPage(String indexPath, Integer pageNum, Integer pageSize, String queryStr) throws IOException, org.apache.lucene.queryParser.ParseException {
 		// 1.创建Directory,索引所在的位置
 		directory = getDirectory(indexPath);
 		// 2.IndexReader
@@ -99,7 +107,8 @@ public class LuceneUtils2 {
 		// 3.查询对象创建
 		IndexSearcher indexSearcher = new IndexSearcher(indexReader);
 		// 3.1.Query条件
-		Query query = new TermQuery(new Term("status", "1"));
+		QueryParser queryParser = new QueryParser(Version.LUCENE_35, "desc", new StandardAnalyzer(Version.LUCENE_35));
+		Query query = queryParser.parse(queryStr);
 		// 4.查询
 		int n = pageNum * pageSize;// 最起码的数量
 		TopDocs topDocs = indexSearcher.search(query, n);
@@ -107,15 +116,127 @@ public class LuceneUtils2 {
 		System.err.println("总共有:" + topDocs.totalHits);
 		for (int start = (pageNum - 1) * pageSize; ((start < topDocs.totalHits) && (start < pageNum * pageSize)); start++) {
 			Document tempDoc = indexSearcher.doc(topDocs.scoreDocs[start].doc);
-			System.err.println(tempDoc.get("toString"));
+			System.err.println(topDocs.scoreDocs[start] + "," + tempDoc.get("toString"));
 		}
 		indexSearcher.close();
 	}
 
-	public static void partcipleAnalyzer(String worldStr) {
-		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
+	/**
+	 * 查询分页
+	 * 
+	 * @param indexPath
+	 *            索引位置
+	 * @param pageNum
+	 *            从1开始,第几页
+	 * @param pageSize
+	 *            每页多少条
+	 * @param queryStr
+	 *            status:1 AND desc:i
+	 * @param filter 
+	 * @throws IOException
+	 * @throws org.apache.lucene.queryParser.ParseException
+	 */
+	public static void indexPage(String indexPath, Integer pageNum, Integer pageSize, String queryStr, Filter filter) throws IOException, org.apache.lucene.queryParser.ParseException {
+		// 1.创建Directory,索引所在的位置
+		directory = getDirectory(indexPath);
+		// 2.IndexReader
+		indexReader = getIndexReader(directory);
+		// 3.查询对象创建
+		IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+		// 3.1.Query条件
+		QueryParser queryParser = new QueryParser(Version.LUCENE_35, "desc", new StandardAnalyzer(Version.LUCENE_35));
+		Query query = queryParser.parse(queryStr);
+		// 4.查询
+		int n = pageNum * pageSize;// 最起码的数量
+		TopDocs topDocs = null;
+		if (filter == null) {
+			topDocs = indexSearcher.search(query, n);
+		} else {
+			topDocs = indexSearcher.search(query, filter, n);
+		}
+		// 5.手动的分页
+		System.err.println("总共有:" + topDocs.totalHits);
+		for (int start = (pageNum - 1) * pageSize; ((start < topDocs.totalHits) && (start < pageNum * pageSize)); start++) {
+			Document tempDoc = indexSearcher.doc(topDocs.scoreDocs[start].doc);
+			System.err.println(topDocs.scoreDocs[start] + "," + tempDoc.get("toString"));
+		}
+		indexSearcher.close();
+	}
+
+	/**
+	 * 查询分页,携带排序
+	 * 
+	 * @param indexPath
+	 *            索引位置
+	 * @param pageNum
+	 *            从1开始,第几页
+	 * @param pageSize
+	 *            每页多少条
+	 * @param queryStr
+	 *            status:1 AND desc:i
+	 * @param sort
+	 *            排序对象
+	 * @throws IOException
+	 * @throws org.apache.lucene.queryParser.ParseException
+	 */
+	public static void indexPage(String indexPath, Integer pageNum, Integer pageSize, String queryStr, Sort sort) throws IOException, org.apache.lucene.queryParser.ParseException {
+		// 1.创建Directory,索引所在的位置
+		directory = getDirectory(indexPath);
+		// 2.IndexReader
+		indexReader = getIndexReader(directory);
+		// 3.查询对象创建
+		IndexSearcher indexSearcher = new IndexSearcher(indexReader);
+		// 3.1.Query条件
+		QueryParser queryParser = new QueryParser(Version.LUCENE_35, "desc", new StandardAnalyzer(Version.LUCENE_35));
+		Query query = queryParser.parse(queryStr);
+		// 4.查询
+		int n = pageNum * pageSize;// 最起码的数量
+		TopDocs topDocs = null;
+		if (sort == null) {
+			topDocs = indexSearcher.search(query, n);
+		} else {
+			// sort不可为空
+			topDocs = indexSearcher.search(query, n, sort);
+		}
+		// 5.手动的分页
+		System.err.println("总共有:" + topDocs.totalHits);
+		for (int start = (pageNum - 1) * pageSize; ((start < topDocs.totalHits) && (start < pageNum * pageSize)); start++) {
+			Document tempDoc = indexSearcher.doc(topDocs.scoreDocs[start].doc);
+			System.err.println(topDocs.scoreDocs[start] + "," + tempDoc.get("toString"));
+		}
+		indexSearcher.close();
+	}
+
+	/**
+	 * 分词器
+	 * 
+	 * @param worldStr
+	 * @param analyzer
+	 * @throws IOException
+	 */
+	public static void partcipleAnalyzer(String worldStr, Analyzer analyzer) throws IOException {
 		TokenStream ts = analyzer.tokenStream("name", new StringReader(worldStr));
-		System.err.println(ts.toString());
+		// 1.单词
+		CharTermAttribute cta = ts.addAttribute(CharTermAttribute.class);
+		// 2.位置偏移量
+		OffsetAttribute oa = ts.addAttribute(OffsetAttribute.class);
+		// 3.单词与单词之间的增量
+		PositionIncrementAttribute pia = ts.addAttribute(PositionIncrementAttribute.class);
+		//
+		FlagsAttribute fa = ts.addAttribute(FlagsAttribute.class);
+		KeywordAttribute ka = ts.addAttribute(KeywordAttribute.class);
+		PayloadAttribute pa = ts.addAttribute(PayloadAttribute.class);
+		while (ts.incrementToken()) {
+			System.err.print("[" + cta.toString() + "]");
+			System.err.println("[" + oa + "]");
+			System.err.println("[" + pia + "]");
+			System.err.println("[" + fa + "]");
+			System.err.println("[" + ka + "]");
+			System.err.println("[" + pa + "]");
+		}
+		ts.close();
+		System.err.println("");
+		System.err.println("----------------------------------");
 	}
 
 	/**
@@ -204,7 +325,7 @@ public class LuceneUtils2 {
 		for (User user : getUsers()) {
 			Document tempDoc = new Document();
 			// 1.添加一个id（域）,存储并索引,但不分词,不记录所以的norms
-			tempDoc.add(new Field("id", user.getId().toString(), Store.YES, Index.NOT_ANALYZED_NO_NORMS));
+			tempDoc.add(new NumericField("id", Store.YES, false).setIntValue(user.getId()));
 			// 2.再添加一个域phone,存储并索引，同时记录索引的norms,但不分词
 			tempDoc.add(new Field("phone", user.getPhone(), Store.YES, Index.NOT_ANALYZED));
 			// 3.名称,进行存储，分词，索引，但不记录索引的norms
