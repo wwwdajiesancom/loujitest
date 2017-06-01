@@ -1,4 +1,4 @@
-package com.loujie.www.designpattern.signleton;
+package com.loujie.www.designpattern.create.signleton;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;

@@ -1,4 +1,4 @@
-package com.loujie.www.designpattern.factory;
+package com.loujie.www.designpattern.create.factory;
 
 import org.junit.Test;
 
