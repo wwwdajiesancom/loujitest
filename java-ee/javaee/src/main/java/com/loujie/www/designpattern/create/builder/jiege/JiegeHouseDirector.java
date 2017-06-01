@@ -7,6 +7,12 @@ import com.loujie.www.designpattern.create.builder.HouseDirector;
 import com.loujie.www.designpattern.create.builder.WindowCompent;
 import com.loujie.www.designpattern.create.builder.WoodCompent;
 
+/**
+ * 杰哥装配器
+ * 
+ * @author loujie
+ *
+ */
 public class JiegeHouseDirector extends HouseDirector {
 
 	public JiegeHouseDirector(HouseBuilder houseBuilder) {
