@@ -2,6 +2,8 @@ package com.loujie.www.designpattern.factory;
 
 import org.junit.Test;
 
+import com.loujie.www.designpattern.factory.abstractfactory.AbstractCar;
+import com.loujie.www.designpattern.factory.abstractfactory.HightCarFactory;
 import com.loujie.www.designpattern.factory.methodfactory.AodiFactory;
 import com.loujie.www.designpattern.factory.methodfactory.BydFactory;
 import com.loujie.www.designpattern.factory.simplefactory.Aodi;
@@ -52,6 +54,14 @@ public class FactoryTest {
 
 		car1.run();
 		car2.run();
+	}
+
+	@Test
+	public void abstractFactory() {
+		// 创建一个高端的车
+		AbstractCar abstractCar = new HightCarFactory();
+
+		abstractCar.createEngine().runSpeed();
 	}
 
 }
