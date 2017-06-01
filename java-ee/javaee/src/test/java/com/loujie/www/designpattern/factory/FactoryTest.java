@@ -2,14 +2,14 @@ package com.loujie.www.designpattern.factory;
 
 import org.junit.Test;
 
-import com.loujie.www.designpattern.factory.abstractfactory.AbstractCar;
-import com.loujie.www.designpattern.factory.abstractfactory.HightCarFactory;
-import com.loujie.www.designpattern.factory.methodfactory.AodiFactory;
-import com.loujie.www.designpattern.factory.methodfactory.BydFactory;
-import com.loujie.www.designpattern.factory.simplefactory.Aodi;
-import com.loujie.www.designpattern.factory.simplefactory.Byd;
-import com.loujie.www.designpattern.factory.simplefactory.Car;
-import com.loujie.www.designpattern.factory.simplefactory.CarFactory;
+import com.loujie.www.designpattern.create.factory.abstractfactory.AbstractCar;
+import com.loujie.www.designpattern.create.factory.abstractfactory.HightCarFactory;
+import com.loujie.www.designpattern.create.factory.methodfactory.AodiFactory;
+import com.loujie.www.designpattern.create.factory.methodfactory.BydFactory;
+import com.loujie.www.designpattern.create.factory.simplefactory.Aodi;
+import com.loujie.www.designpattern.create.factory.simplefactory.Byd;
+import com.loujie.www.designpattern.create.factory.simplefactory.Car;
+import com.loujie.www.designpattern.create.factory.simplefactory.CarFactory;
 
 public class FactoryTest {
 

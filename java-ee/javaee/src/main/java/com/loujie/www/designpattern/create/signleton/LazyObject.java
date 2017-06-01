@@ -1,4 +1,4 @@
-package com.loujie.www.designpattern.signleton;
+package com.loujie.www.designpattern.create.signleton;
 
 import java.io.FileInputStream;
 import java.io.IOException;

@@ -9,6 +9,9 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
+import com.loujie.www.designpattern.create.signleton.EnumObject;
+import com.loujie.www.designpattern.create.signleton.HungryManObject;
+
 public class SignletonDemo {
 
 	@Test

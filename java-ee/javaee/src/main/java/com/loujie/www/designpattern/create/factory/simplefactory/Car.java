@@ -1,4 +1,4 @@
-package com.loujie.www.designpattern.factory.simplefactory;
+package com.loujie.www.designpattern.create.factory.simplefactory;
 
 /**
  * 车

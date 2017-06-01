@@ -1,4 +1,4 @@
-package com.loujie.www.designpattern.factory.abstractfactory;
+package com.loujie.www.designpattern.create.factory.abstractfactory;
 
 /**
  * 高端汽车工厂
