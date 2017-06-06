@@ -9,9 +9,6 @@ import java.util.concurrent.CountDownLatch;
 
 import org.junit.Test;
 
-import com.loujie.www.designpattern.create.signleton.EnumObject;
-import com.loujie.www.designpattern.create.signleton.HungryManObject;
-
 public class SignletonDemo {
 
 	@Test
@@ -25,6 +22,7 @@ public class SignletonDemo {
 					@Override
 					public void run() {
 						for (int i = 0; i < 100; i++) {
+							@SuppressWarnings("unused")
 							EnumObject eObject = EnumObject.INSTANCE;
 						}
 						cdl.countDown();
@@ -50,7 +48,6 @@ public class SignletonDemo {
 	public void timeTest() {
 		List<Integer> list = new ArrayList<>();
 
-		
 		Collections.sort(list);
 
 		long total = 0;
